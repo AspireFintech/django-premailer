@@ -10,9 +10,25 @@ from django.template.loader import get_template
 
 TESTS_ROOT = os.path.dirname(os.path.abspath(__file__))
 TESTS_TEMPLATE_DIR = os.path.join(TESTS_ROOT, 'templates')
-TESTS_TEMPLATE_DIRS = settings.TEMPLATE_DIRS + (TESTS_TEMPLATE_DIR,)
+TESTS_TEMPLATE_DIRS = settings.TEMPLATE_DIRS + [TESTS_TEMPLATE_DIR]
+
+TESTS_TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'DIRS': [os.path.join(TESTS_ROOT, 'templates')],
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 @override_settings(TEMPLATE_DIRS=TESTS_TEMPLATE_DIRS,
+                   TEMPLATES=TESTS_TEMPLATES,
                    PREMAILER_OPTIONS=dict(base_url='http://example.com'))
 class PremailerTests(TestCase):
 
