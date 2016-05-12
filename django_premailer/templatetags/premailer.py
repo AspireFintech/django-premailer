@@ -19,7 +19,13 @@ class PremailerNode(template.Node):
         kwargs = PREMAILER_OPTIONS.copy()
 
         for expression in self.filter_expressions:
-            kwargs.update(base_url=expression.resolve(context, True))
+            base_url = expression.resolve(context, True)
+            if not base_url:
+                base_url = '%s://%s' % (
+                    context['request'].scheme,
+                    context['request'].get_host()
+                )
+            kwargs.update(base_url=base_url)
 
         transformed = Premailer(rendered_contents, **kwargs).transform()
         return transformed
