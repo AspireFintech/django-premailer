@@ -20,12 +20,13 @@ class PremailerNode(template.Node):
 
         for expression in self.filter_expressions:
             base_url = expression.resolve(context, True)
-            if not base_url:
-                base_url = '%s://%s' % (
-                    context['request'].scheme,
-                    context['request'].get_host()
-                )
             kwargs.update(base_url=base_url)
+
+        if 'base_url' not in kwargs:
+            kwargs['base_url'] = '%s://%s' % (
+                context['request'].scheme,
+                context['request'].get_host()
+            )
 
         transformed = Premailer(rendered_contents, **kwargs).transform()
         return transformed
